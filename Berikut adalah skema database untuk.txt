@@ -35,3 +35,85 @@ Dalam skema database di atas, terdapat tiga tabel utama:
     Tabel Notifikasi digunakan untuk menyimpan data notifikasi yang dikirim kepada organisasi pemerintah daerah mengenai status pengajuan domain mereka. Tabel ini mencakup informasi seperti ID pengajuan domain terkait, pesan notifikasi, status baca, dan timestamp kapan notifikasi dibuat atau diperbarui.
 
 Dengan skema database ini, aplikasi dapat menyimpan dan mengelola data pengajuan domain, pengguna, dan notifikasi secara efisien dan terorganisir. Selain itu, hubungan antara tabel-tabel ini memungkinkan aplikasi untuk melacak dan menyinkronkan informasi dengan tepat sesuai dengan kebutuhan bisnis dan fungsionalitas yang telah ditentukan.
+
+Untuk mengimplementasikan pengajuan domain berdasarkan nama pengguna (user) dan OPD (Organisasi Pemerintah Daerah), Anda dapat melakukan beberapa langkah berikut:
+1. Tabel Pengajuan Domain
+
+    id: Integer (Primary Key, Auto Increment)
+    nama_domain: Varchar
+    pengguna_id: Integer (Foreign Key ke id pada tabel Pengguna)
+    opd_id: Integer (Foreign Key ke id pada tabel OPD)
+    bahasa_program_html: Boolean (Default: false)
+    bahasa_program_php: Boolean (Default: false)
+    bahasa_program_java: Boolean (Default: false)
+    bahasa_program_javascript: Boolean (Default: false)
+    bahasa_program_xml: Boolean (Default: false)
+    jenis_database: Enum ('MySQL', 'PostgreSQL', 'MongoDB')
+    versi_php: Enum ('Versi 5', 'Versi 7', 'Versi 8')
+    nama_framework: Varchar (Nullable)
+    template_bootstrap: Boolean (Default: false)
+    deskripsi: Text
+    status: Enum ('Pengajuan Baru', 'Diverifikasi', 'Ditolak')
+    approved_by: Integer (Foreign Key ke id pada tabel Pengguna)
+    created_at: Timestamp
+    updated_at: Timestamp
+
+2. Tabel Pengguna
+
+    id: Integer (Primary Key, Auto Increment)
+    nama: Varchar
+    email: Varchar (Unique)
+    password: Varchar (Hashed)
+    opd_id: Integer (Foreign Key ke id pada tabel OPD)
+    role: Enum ('User', 'Admin')
+    created_at: Timestamp
+    updated_at: Timestamp
+
+3. Tabel OPD
+
+    id: Integer (Primary Key, Auto Increment)
+    nama_opd: Varchar
+
+Dalam skema database yang direvisi, Anda dapat menghubungkan tabel Pengguna dan Pengajuan Domain melalui kolom pengguna_id dan kolom opd_id. Dengan cara ini, setiap pengajuan domain akan terkait dengan pengguna yang mengajukan (user) dan Organisasi Pemerintah Daerah (OPD) tempat pengguna tersebut bekerja.
+
+Ketika pengguna mengajukan domain, Anda bisa mengambil informasi OPD dari tabel Pengguna dan menyimpannya dalam kolom opd_id di tabel Pengajuan Domain. Ini memungkinkan Anda untuk mengetahui asal OPD dari setiap pengajuan domain.
+
+Saat menampilkan data pengajuan domain, Anda dapat mengambil nama pengguna dan nama OPD berdasarkan ID yang terkait dari tabel Pengguna dan OPD, sehingga informasi ini dapat ditampilkan kepada administrator atau pengguna lain yang memeriksa status pengajuan domain.
+
+Dengan skema database yang disesuaikan, aplikasi Anda akan dapat melacak informasi pengguna (user) dan OPD terkait dengan setiap pengajuan domain, memungkinkan transparansi dan pelacakan yang lebih baik dalam proses pengajuan.
+User
+berdasarkan skema diatas sudah ada gambaran aplikasi yang di buat seperti apa?
+2 / 2
+ChatGPT
+
+Berdasarkan skema database yang telah disediakan, Anda dapat membayangkan sebuah aplikasi web yang memungkinkan pengguna (user) dari Organisasi Pemerintah Daerah (OPD) untuk mengajukan domain baru secara online. Berikut adalah gambaran umum tentang bagaimana aplikasi tersebut mungkin terlihat:
+
+    Halaman Utama
+        Halaman utama aplikasi menampilkan informasi tentang sistem pengajuan domain.
+        Terdapat tombol atau tautan untuk mengajukan domain baru.
+
+    Formulir Pengajuan Domain
+        Setelah pengguna mengklik tombol untuk mengajukan domain baru, mereka akan diarahkan ke halaman formulir pengajuan domain.
+        Formulir tersebut akan meminta pengguna untuk mengisi informasi seperti nama domain, bahasa pemrograman yang digunakan, jenis database, versi PHP, dan deskripsi proyek.
+        Pengguna juga akan diminta memilih OPD tempat mereka bekerja.
+
+    Panel Admin
+        Panel admin akan menampilkan daftar pengajuan domain yang masuk.
+        Admin dapat memverifikasi, menyetujui, atau menolak setiap pengajuan domain.
+        Admin juga dapat melihat detail pengajuan domain, termasuk informasi pengguna yang mengajukan dan OPD terkait.
+
+    Notifikasi
+        Pengguna akan menerima notifikasi melalui email atau di dalam aplikasi tentang status pengajuan domain mereka (misalnya, pengajuan baru, disetujui, atau ditolak).
+        Admin juga akan menerima notifikasi tentang pengajuan domain yang masuk dan tindakan yang perlu diambil.
+
+    Manajemen Pengguna
+        Admin dapat mengelola pengguna yang terdaftar di sistem, termasuk menambah, menghapus, atau mengubah izin akses.
+
+    Halaman Detail Pengajuan Domain
+        Setiap pengajuan domain memiliki halaman detail yang menampilkan informasi lengkap tentang pengajuan tersebut, termasuk nama pengguna, OPD, status, dan detail lainnya.
+
+    Fitur Tambahan
+        Terdapat fitur pencarian dan penyaringan untuk memudahkan admin dalam mencari pengajuan domain.
+        Pengguna dapat melihat riwayat pengajuan domain yang pernah mereka ajukan sebelumnya.
+
+Dengan menggunakan skema database yang telah disediakan sebagai dasar, Anda dapat mengembangkan aplikasi web yang sesuai dengan kebutuhan dan tujuan proyek Anda. Pastikan untuk merancang antarmuka pengguna yang intuitif dan responsif serta menyediakan fitur-fitur yang berguna bagi pengguna dan administrator.
